@@ -3,12 +3,16 @@ package com.example.myactivityresult;
 import android.app.Activity;
 import android.app.ActionBar;
 import android.app.Fragment;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.TextView;
 import android.os.Build;
 
 public class MainActivity extends Activity {
@@ -19,7 +23,9 @@ public class MainActivity extends Activity {
 		setContentView(R.layout.activity_main);
 		if (savedInstanceState == null) {
 			getFragmentManager().beginTransaction()
-					.add(R.id.container, new PlaceholderFragment()).commit();
+			.add(R.id.container, new MyFragment()).commit();
+			getFragmentManager().beginTransaction()
+			.add(R.id.container, new MyFragment()).commit();
 		}
 	}
 
@@ -42,20 +48,49 @@ public class MainActivity extends Activity {
 		return super.onOptionsItemSelected(item);
 	}
 
-	/**
-	 * A placeholder fragment containing a simple view.
-	 */
-	public static class PlaceholderFragment extends Fragment {
+	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+	// Fragment
+	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+	public static class MyFragment extends Fragment {
 
-		public PlaceholderFragment() {
+		public MyFragment() {
 		}
 
 		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container,
 				Bundle savedInstanceState) {
-			View rootView = inflater.inflate(R.layout.fragment_main, container,
-					false);
+			// ビュー生成
+			View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+			
+			// イベント設定
+			Button button = (Button)rootView.findViewById(R.id.button1);
+			button.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					Intent intent = new Intent(getActivity(), SubActivity.class);
+					startActivityForResult(intent, 1);
+				}
+			});
+
+			// 返す
 			return rootView;
 		}
+
+		@Override
+		public void onActivityResult(int requestCode, int resultCode,
+				Intent data) {
+			if(requestCode == 1){
+				TextView textView = (TextView)getView().findViewById(R.id.textView1);
+				if(resultCode == RESULT_OK){
+					textView.setText(data.getAction());
+				}
+				else if(resultCode == RESULT_CANCELED){
+					textView.setText("CANCELED");
+				}
+			}
+			// TODO Auto-generated method stub
+			super.onActivityResult(requestCode, resultCode, data);
+		}
+		
 	}
 }
